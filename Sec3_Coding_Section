@@ -1,0 +1,87 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Publisher {
+
+    std::uint64_t instrumentId_;
+    double lastTradedPrice_;
+    double datapoint;
+};
+
+struct Subscriber {
+
+    char subscriberType_;
+    std::uint64_t subscriberId_;
+    std::uint64_t instrumentId_;
+};
+
+char input_subscriberType_;
+std::uint64_t input_subscriberId_;
+std::uint64_t input_instrumentId_;
+struct Publisher P[2000];
+vector<Publisher> v;
+struct Subscriber S[3000]; // set to 3000 as of now
+vector<Subscriber> s;
+int no_of_input_lines, m, K;
+
+int search_() {
+    for (int j = 0; j < s.size(); j++)
+        for (int k = 0; k < v.size(); k++) {
+            m = 0;
+
+            if (input_subscriberType_ == s[j].subscriberType_ &&
+                input_subscriberId_ == s[j].subscriberId_ &&
+                input_instrumentId_ == v[k].instrumentId_) {
+                m = 1;
+                K = k;
+                break;
+            }
+        }
+    return m;
+}
+
+int main() {
+    char member;
+    int j, k, get_data_count, lines;
+    string method;
+
+    cin >> no_of_input_lines;
+
+    for (int i = 0; i < no_of_input_lines; i++) {
+        cin >> member;
+
+        if (member == 'P') {
+            cin >> P[i].instrumentId_;
+            cin >> P[i].lastTradedPrice_;
+            cin >> P[i].datapoint;
+            v.push_back(P[i]);
+        } else if (member == 'S') {
+            cin >> input_subscriberType_;
+            cin >> input_subscriberId_;
+            cin >> method;
+
+            if (method == "subscribe") {
+                S[i].subscriberType_ = input_subscriberType_;
+                S[i].subscriberId_ = input_subscriberId_;
+                cin >> input_instrumentId_;
+                S[i].instrumentId_ = input_instrumentId_;
+            } else if (method == "get_data") {
+                cin >> input_instrumentId_;
+                get_data_count++;
+
+                if (search_())
+                    cout << input_subscriberType_ << "," << input_subscriberId_
+                         << "," << input_instrumentId_ << ","
+                         << v[K].lastTradedPrice_ << "," << v[K].datapoint
+                         << '\n';
+                else
+                    cout << input_subscriberType_ << "," << input_subscriberId_
+                         << "," << input_instrumentId_ << ","
+                         << "Invalid Request" << '\n';
+            }
+            s.push_back(S[i]);
+        }
+    }
+
+    return 0;
+}
